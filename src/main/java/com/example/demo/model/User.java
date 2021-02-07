@@ -3,6 +3,7 @@ package com.example.demo.model;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.CascadeType;
 import javax.persistence.ElementCollection;
@@ -52,6 +53,7 @@ public class User implements Serializable {
 		// TODO Auto-generated constructor stub
 	}
 
+	
 
 
 	public User(int id, String name, String password) {
@@ -70,17 +72,14 @@ public class User implements Serializable {
 	public String getName() {
 		return name;
 	}
-	
-	
-	
-	public Address getAddress() {
-		return address;
+
+	public Optional<Address> getAddress() {
+		return Optional.ofNullable(address);
 	}
 
 	public void setAddress(Address address) {
 		this.address = address;
 	}
-
 
 	public User(int id, String name, String password, Address address,
 			@Email(regexp = "^[A-Za-z0-9+_.-]+@(.+)$") String email, String accountState, List<String> roles) {
@@ -94,12 +93,6 @@ public class User implements Serializable {
 		this.roles = roles;
 	}
 
-
-
-	/*
-	 * public Optional<Address> getAddress() { return address; } public void
-	 * setAddress(Optional<Address> address) { this.address = address; }
-	 */
 	public String getEmail() {
 		return email;
 	}
@@ -127,7 +120,6 @@ public class User implements Serializable {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
 	
 	@Override
 	public int hashCode() {

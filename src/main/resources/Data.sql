@@ -7,6 +7,5 @@ INSERT into user_roles values (102,'User');
 INSERT into user_roles values (103,'User'); 
 INSERT into user_roles values (104,'User'); 
 insert into address(users_id,city,pincode,State) values(101,'Dwarka',110075,'Delhi');
-insert into address(users_id,city,pincode,State) values(102,'Dwarka',110075,'Delhi');
 insert into address(users_id,city,pincode,State) values(103,'GZB',110111,'UP');
 insert into address(users_id,city,pincode,State) values(104,'MZN',251002,'UP');
