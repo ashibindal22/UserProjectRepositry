@@ -17,7 +17,6 @@ import javax.validation.constraints.Email;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
-
 @Entity
 public class User implements Serializable {
 	
@@ -39,22 +38,11 @@ public class User implements Serializable {
 	@ElementCollection
 	private List<String> roles;
 
-	/*
-	 * public User(int id, String name, String password, Optional<Address> address,
-	 * 
-	 * @Email(regexp = "^[A-Za-z0-9+.]+@(.+)$") String email, String accountState,
-	 * List<String> roles) { super(); this.id = id; this.name = name; this.password
-	 * = password; this.address = address; this.email = email; this.accountState =
-	 * accountState; this.roles = roles; }
-	 */
 	
 	public User() {
 
 		// TODO Auto-generated constructor stub
 	}
-
-	
-
 
 	public User(int id, String name, String password) {
 		super();
@@ -183,8 +171,6 @@ public class User implements Serializable {
 		return "User [id=" + id + ", name=" + name + ", password=" + password + ", address=" + address + ", email="
 				+ email + ", accountState=" + accountState + ", roles=" + roles + "]";
 	}
-	
-	
 	
 	
 }
