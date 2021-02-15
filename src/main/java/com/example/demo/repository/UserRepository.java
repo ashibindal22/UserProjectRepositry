@@ -21,6 +21,8 @@ public interface UserRepository extends JpaRepository<User,Integer> {
 
 	List<User> findByNameOrderByNameDesc(String name);
 
-	@Query("select u from User u order by u.name desc")
-	Page<User> findAll(PageRequest of, Sort by);
+	/*
+	 * @Query("select u from User u where u.email =:email") Page<User>
+	 * findAllSorted(PageRequest of);
+	 */
 }

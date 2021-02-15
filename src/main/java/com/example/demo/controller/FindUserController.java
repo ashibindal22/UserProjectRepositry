@@ -1,15 +1,15 @@
 package com.example.demo.controller;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.OrderBy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +20,7 @@ import com.example.demo.assembler.UserAssembler;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.response.dto.UserDto;
+import com.example.demo.service.UserService;
 
 @RestController
 @RequestMapping("/find")
@@ -29,57 +30,38 @@ public class FindUserController {
 	UserRepository userRepositry;
 	
 	@Autowired
+	UserService userService;
+	
+	@Autowired
 	UserAssembler userAssembler;
 	
+	Logger logger = LoggerFactory.getLogger(FindUserController.class);
+	
+	
 	@GetMapping("allUsers")
-	public List<User> getAllUsers(@RequestParam(value= "page", defaultValue="2")  int page,
-			@RequestParam(value="orderBy",defaultValue ="ASC") String orderBy)
+	@Cacheable(value="allUsersCache" )
+	public ResponseEntity<List<User>> SearchUsers(
+			@RequestParam(value= "pageSize", defaultValue="2")  int pageSize,
+			@RequestParam(value= "start", defaultValue="0")  int start,
+			@RequestParam(value="orderBy",defaultValue ="ASC") String orderBy,
+			@RequestParam(value="sortBy", defaultValue = "id") String sortBy,
+			@RequestParam(value="id") Optional<Integer> id,
+			@RequestParam(value="name") Optional<String> name,
+			@RequestParam(value="accountOption",defaultValue ="Active") String accountState
+			) throws InterruptedException
 	{
-		Page<User> user = userRepositry.findAll(PageRequest.of(0, page) ,Sort.by(Sort.Direction.DESC,"name"));
+		Thread.sleep(1000);
 		
-		return user.getContent();
+		logger.debug("Getting Started with getAllUsers");
+		
+		List<User> users =userRepositry.findAll();
+		List<User> finalUser = new LinkedList<User>();
+		
+		finalUser= userService.findUsers(users, id, name, accountState,start,pageSize,orderBy,sortBy);
+		return new ResponseEntity<>(finalUser,HttpStatus.OK);
+		
+	//Collections.sort(list);	
+		//return new ResponseEntity<>(finalUser, HttpStatus.OK);
 		
 	}
-	
-	@GetMapping("id/{id}")
-	public UserDto getAllUsersById(@PathVariable int id)
-	{
-		Optional<User> usr = userRepositry.findById(id);
-		UserDto userDto=  userAssembler.toModel(usr);
-		return userDto;
-	}
-	
-	@GetMapping("name/{name}")
-	public List<User> getAllUsersByName(@PathVariable String name)
-	{
-		
-		List<User> usr = userRepositry.findByNameIgnoreCase(name);
-		//UserDto userDto=  userAssembler.toModel(usr);
-		return usr;
-	}
-	
-	@GetMapping("AccountStatus/{status}")
-	public List<User> getAllUsersByAccountStatus(@PathVariable String status)
-	{
-		List<User> usr = userRepositry.findByAccountStateIgnoreCase(status);
-		//UserDto userDto=  userAssembler.toModel(usr);
-		return usr;
-	}
-	
-	@GetMapping("nameAsc/{name}")
-	public List<User> getAllUsersOrderByName(@PathVariable String name)
-	{
-		List<User> usr = userRepositry.findByNameOrderByName(name);
-		//UserDto userDto=  userAssembler.toModel(usr);
-		return usr;
-	}
-	
-	@GetMapping("nameDesc/{name}")
-	public List<User> getAllUsersOrderByNameDesc(@PathVariable String name)
-	{
-		List<User> usr = userRepositry.findByNameOrderByNameDesc(name);
-		//UserDto userDto=  userAssembler.toModel(usr);
-		return usr;
-	}
-	
 }
